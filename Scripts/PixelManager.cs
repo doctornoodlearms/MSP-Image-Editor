@@ -1,30 +1,44 @@
 using Godot;
 using NewConsole;
+using System;
+using System.Runtime.InteropServices;
 
 namespace MSP{
 
     public class PixelManager : Control{
 
-        [Export] int[] gridSize = new int[2];
+		[Export] Vector2 gridSize = new Vector2(1, 1);
 
 		PixelGroup[] pixelList = null;
 
-		float zoomScale = 1.0f;
+		[Export] Vector2 basePixelSize = new Vector2(50, 50);
+		[Export] float zoomFactor = 0.1f;
+		float pixelScale = 1.0f;
+
+
+		bool cameraPan = false;
+		Vector2 cameraPos = new Vector2(0, 0);
 
         public override void _Ready(){
 
-			pixelList = new PixelGroup[gridSize[0] * gridSize[1]];
+			pixelList = new PixelGroup[(int) gridSize.x * (int) gridSize.y];
 
-            for(int y = 0; y < gridSize[1]; y++){
+            for(int y = 0; y < (int) gridSize.y; y++){
 
-                for(int x = 0; x < gridSize[0]; x++){
+                for(int x = 0; x < (int) gridSize.x; x++){
 
                     PixelGroup newPixel = new PixelGroup(x, y);
-					pixelList[x * y] = newPixel;
+					newPixel.color = new Color(GD.Randf(), GD.Randf(), GD.Randf());
+
+					pixelList[x + y * (int) gridSize.x] = newPixel;
                 }
             }
-			GD.Print(pixelList.Length);
         }
+
+		public override void _Process(float delta) {
+
+			GD.Print(cameraPos);
+		}
 
 		public override void _Notification(int what) {
 
@@ -37,28 +51,26 @@ namespace MSP{
 					pixel.Free();
 				}
 			}
-			base._Notification(what);
 		}
 
 		public override void _Draw() {
 
 			foreach(PixelGroup pixel in pixelList) {
 
-				DrawRect(new Rect2(pixel.position, new Vector2(100, 100)), Colors.Red);
+				DrawRect(new Rect2(cameraPos + pixel.position * basePixelSize * pixelScale, basePixelSize * pixelScale), pixel.color);
 			}
 		}
 
 		public override void _Input(InputEvent @event) {
 
-			if(Input.IsActionJustPressed("Pixel_Zoom_In")) {
+			pixelScale += (Input.IsActionJustPressed("Camera_Zoom_In") ? 1 : 0) - (Input.IsActionJustPressed("Camera_Zoom_Out") ? 1 : 0);
+			cameraPan = Input.IsActionPressed("Camera_Pan");
+			if((@event is InputEventMouseMotion) && cameraPan) {
 
-				GD.Print("Zoom In");
+				InputEventMouseMotion mouseMotion = @event as InputEventMouseMotion;
+				cameraPos += mouseMotion.Relative;
 			}
-			if(Input.IsActionJustPressed("Pixel_Zoom_Out")) {
-
-				GD.Print("Zoom Out");
-			}
-
+			Update();
 		}
 	}
 }
