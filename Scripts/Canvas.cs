@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace MSP{
 
-	public class PixelManager : Control{
+	public class Canvas : Control {
 
 		// How often the pixels should be rendered
 		float renderTickRate = 0;
@@ -20,6 +20,7 @@ namespace MSP{
 		PixelGroup[] pixelList = null;
 		// The size of a pixel at the default zoom level
 		[Export] Vector2 basePixelSize = new Vector2(50, 50);
+
 		// How much to modify the pixel scale
 		[Export] float zoomFactor = 0.1f;
 		[Export] float zoomMax = 2.0f;
@@ -107,12 +108,15 @@ namespace MSP{
 					DrawRect(new Rect2(position + new Vector2(borderWidth, borderWidth) / 2, size - new Vector2(borderWidth, borderWidth)), Colors.Black, false, borderWidth);
 				}
 			}
+
+			DrawRect(new Rect2(Vector2.Zero, RectSize), Colors.Red, false, 5.0f);
 		}
 
 		public override void _Input(InputEvent @event) {
 
 			// Modify the pixel scale when zooming in and out
-			pixelScale += (Input.IsActionJustPressed("Camera_Zoom_In") ? 1 : 0) - (Input.IsActionJustPressed("Camera_Zoom_Out") ? 1 : 0);
+			pixelScale += ((Input.IsActionJustPressed("Camera_Zoom_In") && pixelScale < zoomMax ? 1 : 0) 
+				- (Input.IsActionJustPressed("Camera_Zoom_Out") && pixelScale > zoomMin ? 1 : 0)) * zoomFactor;
 			// Enables / Disables the camera panning
 			cameraPan = Input.IsActionPressed("Camera_Pan");
 			// Pans the camera
@@ -125,7 +129,7 @@ namespace MSP{
 			if((@event is InputEventMouseMotion) && !cameraPan) {
 
 				InputEventMouseMotion mouseMotion = @event as InputEventMouseMotion;
-				hoverPixelIndex = PixelPositionToPixelIndex(GlobalPositionToPixelPosition(mouseMotion.GlobalPosition));
+				hoverPixelIndex = PixelPositionToPixelIndex(GlobalPositionToPixelPosition(mouseMotion.Position));
 			}
 
 			// Modifies a pixel
