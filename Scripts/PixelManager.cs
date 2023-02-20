@@ -11,6 +11,8 @@ namespace MSP{
 		float renderTickRate = 0;
 		float renderTickCount = 0;
 
+		int hoverPixelIndex = 1;
+
 		// Size of the canvas
 		[Export] Vector2 gridSize = new Vector2(1, 1);
 
@@ -20,6 +22,9 @@ namespace MSP{
 		[Export] Vector2 basePixelSize = new Vector2(50, 50);
 		// How much to modify the pixel scale
 		[Export] float zoomFactor = 0.1f;
+		[Export] float zoomMax = 2.0f;
+		[Export] float zoomMin = 0.1f;
+
 		// The current sscale of the pixel when drawn
 		float pixelScale = 1.0f;
 
@@ -84,15 +89,23 @@ namespace MSP{
 		public override void _Draw() {
 
 			// Render each pixel
-			foreach(PixelGroup pixel in pixelList) {
-				
-				if(pixel == null) {
+			for(int i = 0; i < pixelList.Length; i++) {
+
+				if(pixelList[i] == null) {
 					continue;
 				}
+
+				PixelGroup pixel = pixelList[i];
 
 				Vector2 size = basePixelSize * pixelScale;
 				Vector2 position = cameraPos + pixel.position * size;
 				DrawRect(new Rect2(position, size), pixel.color);
+
+				if(i == hoverPixelIndex) {
+
+					float borderWidth = 100.0f * (pixelScale / basePixelSize.x);
+					DrawRect(new Rect2(position + new Vector2(borderWidth, borderWidth) / 2, size - new Vector2(borderWidth, borderWidth)), Colors.Black, false, borderWidth);
+				}
 			}
 		}
 
@@ -107,6 +120,12 @@ namespace MSP{
 
 				InputEventMouseMotion mouseMotion = @event as InputEventMouseMotion;
 				cameraPos += mouseMotion.Relative;
+			}
+
+			if((@event is InputEventMouseMotion) && !cameraPan) {
+
+				InputEventMouseMotion mouseMotion = @event as InputEventMouseMotion;
+				hoverPixelIndex = PixelPositionToPixelIndex(GlobalPositionToPixelPosition(mouseMotion.GlobalPosition));
 			}
 
 			// Modifies a pixel
@@ -145,7 +164,7 @@ namespace MSP{
 			return realPos;
 		}
 
-		// Returns the position if the pixel in the list (returns -1 if null)
+		// Coverts a pixel position on the grid to the pixel index in the list (returns -1 if null)
 		private int PixelPositionToPixelIndex(Vector2 pixelPos) {
 
 			// Out of bounds on X
