@@ -136,17 +136,31 @@ namespace MSP{
 			if(Input.IsActionJustPressed("Pixel_Modify")) {
 
 				Vector2 pixelPos = GlobalPositionToPixelPosition(GetGlobalMousePosition());
-				ModifyPixel(pixelPos, Colors.Black);
+				ModifyPixel(pixelPos);
 			}
 		}
 
 		// Modifies the color of a pixel
-		public void ModifyPixel(Vector2 pixelPos, Color color) {
+		public void ModifyPixel(Vector2 pixelPos) {
 
 			int pixelIndex = PixelPositionToPixelIndex(pixelPos);
 			if(pixelIndex > -1) {
 
-				pixelList[pixelIndex].color = Colors.Black;
+				Common common = GetNode("/root/Common") as Common;
+				PixelGroup pixel = pixelList[pixelIndex];
+
+				switch(common.currentTool) {
+
+					case(Common.Tools.TOOL_PENCIL):
+
+						pixel.color = common.selectedColor;
+						break;
+
+					case (Common.Tools.TOOL_ERASER):
+
+						pixel.color = Colors.Transparent;
+						break;
+				}
 			}
 		}
 
