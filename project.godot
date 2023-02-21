@@ -14,6 +14,10 @@ config/name="MSP Image Editor"
 run/main_scene="res://Scenes/Main.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+Common="*res://Scripts/Global/Common.cs"
+
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true
