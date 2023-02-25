@@ -1,0 +1,45 @@
+
+.import/.gdignore
+*.1
+*.dll
+*.xml
+.import/icon.png-487276ed1e3a0c39cad0279d744ee560.md5
+.import/icon.png-487276ed1e3a0c39cad0279d744ee560.stex
+.mono/assemblies/Debug/api_hash_cache.cfg
+.mono/assemblies/Debug/GodotSharp.pdb
+.mono/assemblies/Debug/GodotSharpEditor.pdb
+.mono/assemblies/Release/api_hash_cache.cfg
+.mono/assemblies/Release/GodotSharp.pdb
+.mono/assemblies/Release/GodotSharpEditor.pdb
+.mono/metadata/scripts_metadata.editor
+.mono/metadata/scripts_metadata.editor_player
+.mono/temp/bin/Debug/Debugger.pdb
+.mono/temp/bin/Debug/MSP Image Editor.pdb
+.mono/temp/obj/Debug/.NETFramework,Version=v4.7.2.AssemblyAttributes.cs
+.mono/temp/obj/Debug/_IsIncrementalBuild
+.mono/temp/obj/Debug/MSP Image Editor.AssemblyInfo.cs
+.mono/temp/obj/Debug/MSP Image Editor.AssemblyInfoInputs.cache
+.mono/temp/obj/Debug/MSP Image Editor.assets.cache
+.mono/temp/obj/Debug/MSP Image Editor.csproj.AssemblyReference.cache
+.mono/temp/obj/Debug/MSP Image Editor.csproj.BuildWithSkipAnalyzers
+.mono/temp/obj/Debug/MSP Image Editor.csproj.CopyComplete
+.mono/temp/obj/Debug/MSP Image Editor.csproj.CoreCompileInputs.cache
+.mono/temp/obj/Debug/MSP Image Editor.csproj.FileListAbsolute.txt
+.mono/temp/obj/Debug/MSP Image Editor.GeneratedMSBuildEditorConfig.editorconfig
+.mono/temp/obj/Debug/MSP Image Editor.pdb
+.mono/temp/obj/MSP Image Editor.csproj.nuget.dgspec.json
+.mono/temp/obj/MSP Image Editor.csproj.nuget.g.props
+.mono/temp/obj/MSP Image Editor.csproj.nuget.g.targets
+.mono/temp/obj/project.assets.json
+.mono/temp/obj/project.nuget.cache
+.vs/MSP Image Editor/DesignTimeBuild/.dtbcache.v2
+.vs/MSP Image Editor/FileContentIndex/13e60fc8-703b-47c0-a3f1-4b466b90ccdb.vsidx
+.vs/MSP Image Editor/FileContentIndex/a857c1c5-1478-433b-83dd-5f40a7a3c0f3.vsidx
+.vs/MSP Image Editor/FileContentIndex/d1160c26-d202-4d28-b223-66c52c7b66de.vsidx
+.vs/MSP Image Editor/FileContentIndex/f125c0ec-d8d9-4b9b-9ef2-bdaccb24c8f8.vsidx
+.vs/MSP Image Editor/FileContentIndex/read.lock
+.vs/MSP Image Editor/v17/.futdcache.v2
+.vs/MSP Image Editor/v17/.suo
+ChangeLog.tres
+icon.png
+icon.png.import
