@@ -1,9 +1,36 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Scripts/ToolScene.cs" type="Script" id=1]
+[ext_resource path="res://Scenes/BaseTool.tscn" type="PackedScene" id=2]
 
 [node name="ToolScene" type="GridContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+columns = 2
 script = ExtResource( 1 )
-toolList = [ 0, 1 ]
+
+[node name="Pencil" parent="." instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 88.0
+margin_bottom = 20.0
+text = "Pencil"
+tool = 1
+
+[node name="Eraser" parent="." instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 92.0
+margin_right = 143.0
+margin_bottom = 20.0
+text = "Eraser"
+tool = 2
+
+[node name="Picker" parent="." instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 24.0
+margin_right = 88.0
+margin_bottom = 44.0
+text = "Color Picker"
+tool = 3

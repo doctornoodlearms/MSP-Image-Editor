@@ -1,7 +1,5 @@
 using Godot;
-using NewConsole;
-using System;
-using System.Runtime.InteropServices;
+using MSP.Actions;
 
 namespace MSP{
 
@@ -13,18 +11,13 @@ namespace MSP{
 
 		int hoverPixelIndex = 1;
 
-		// Size of the canvas
-		[Export] Vector2 gridSize = new Vector2(1, 1);
-
-		// The pixels to be drawn
-		PixelGroup[] pixelList = null;
 		// The size of a pixel at the default zoom level
-		[Export] Vector2 basePixelSize = new Vector2(50, 50);
+		public Vector2 basePixelSize = new Vector2(50, 50);
 
 		// How much to modify the pixel scale
-		[Export] float zoomFactor = 0.1f;
-		[Export] float zoomMax = 2.0f;
-		[Export] float zoomMin = 0.1f;
+		public float zoomFactor = 0.1f;
+		public float zoomMax = 2.0f;
+		public float zoomMin = 0.1f;
 
 		// The current sscale of the pixel when drawn
 		float pixelScale = 1.0f;
@@ -33,28 +26,10 @@ namespace MSP{
 		bool cameraPan = false;
 		Vector2 cameraPos = new Vector2(0, 0);
 
-		public override void _Ready(){
+		public  void Setup(){
 
 			// Update the tick rate to update every frame
 			renderTickRate = 1 / 60;
-
-			// Modifies the size of the pixel list to allow for all of the pixels on the grid
-			pixelList = new PixelGroup[(int) gridSize.x * (int) gridSize.y];
-
-			// Loops through each row
-			for(int y = 0; y < (int) gridSize.y; y++){
-
-				// Loops through each pixel of a row
-				for(int x = 0; x < (int) gridSize.x; x++){
-
-					// Create a new pixel at position (x, y)
-					PixelGroup newPixel = new PixelGroup(x, y);
-					newPixel.color = new Color(GD.Randf(), GD.Randf(), GD.Randf());
-
-					// Add the pixel to the list in the correct spot
-					pixelList[PixelPositionToPixelIndex(new Vector2(x, y))] = newPixel;
-				}
-			}
 		}
 
 		public override void _Process(float delta) {
@@ -69,38 +44,27 @@ namespace MSP{
 			base._Process(delta);
 		}
 
-		public override void _Notification(int what) {
-
-			// Remove the pixels when closing the program
-			if(what == NotificationWmQuitRequest) {
-
-				for(int i = 0; i < pixelList.Length; i++) {
-
-					PixelGroup pixel = pixelList[i];
-					pixelList[i] = null;
-					if(pixel == null) {
-
-						continue;
-					}
-					pixel.Free();
-				}
-			}
-		}
-
 		public override void _Draw() {
 
-			// Render each pixel
-			for(int i = 0; i < pixelList.Length; i++) {
+			if(Common.self.pixelList == null) {
 
-				if(pixelList[i] == null) {
+				return;
+			}
+
+			// Render each pixel
+			for(int i = 0; i < Common.self.pixelList.Length; i++) {
+
+				if(Common.self.pixelList[i] == null) {
 					continue;
 				}
 
-				PixelGroup pixel = pixelList[i];
+				PixelGroup pixel = Common.self.pixelList[i];
 
 				Vector2 size = basePixelSize * pixelScale;
 				Vector2 position = cameraPos + pixel.position * size;
-				DrawRect(new Rect2(position, size), pixel.color);
+
+				Color pixelColor = pixel.color;
+				DrawRect(new Rect2(position, size), pixelColor);
 
 				if(i == hoverPixelIndex) {
 
@@ -115,10 +79,13 @@ namespace MSP{
 		public override void _Input(InputEvent @event) {
 
 			// Modify the pixel scale when zooming in and out
-			pixelScale += ((Input.IsActionJustPressed("Camera_Zoom_In") && pixelScale < zoomMax ? 1 : 0) 
-				- (Input.IsActionJustPressed("Camera_Zoom_Out") && pixelScale > zoomMin ? 1 : 0)) * zoomFactor;
+			int zoomIn = Input.IsActionJustPressed("Camera_Zoom_In") && pixelScale < zoomMax ? 1 : 0;
+			int zoomOut = Input.IsActionJustPressed("Camera_Zoom_Out") && pixelScale > zoomMin ? 1 : 0; 
+			pixelScale += (zoomIn - zoomOut) * zoomFactor;
+
 			// Enables / Disables the camera panning
 			cameraPan = Input.IsActionPressed("Camera_Pan");
+
 			// Pans the camera
 			if((@event is InputEventMouseMotion) && cameraPan) {
 
@@ -129,38 +96,20 @@ namespace MSP{
 			if((@event is InputEventMouseMotion) && !cameraPan) {
 
 				InputEventMouseMotion mouseMotion = @event as InputEventMouseMotion;
-				hoverPixelIndex = PixelPositionToPixelIndex(GlobalPositionToPixelPosition(mouseMotion.Position));
+				int newPixelIndex = Common.self.PixelPositionToPixelIndex(GlobalPositionToPixelPosition(mouseMotion.Position));
+				if(Input.IsActionPressed("Pixel_Modify") && newPixelIndex != hoverPixelIndex) {
+
+					Common.self.ModifyPixel(Common.self.selectedColor, GlobalPositionToPixelPosition(mouseMotion.Position));
+				}
+				hoverPixelIndex = newPixelIndex;
+				
 			}
 
 			// Modifies a pixel
 			if(Input.IsActionJustPressed("Pixel_Modify")) {
 
 				Vector2 pixelPos = GlobalPositionToPixelPosition(GetGlobalMousePosition());
-				ModifyPixel(pixelPos);
-			}
-		}
-
-		// Modifies the color of a pixel
-		public void ModifyPixel(Vector2 pixelPos) {
-
-			int pixelIndex = PixelPositionToPixelIndex(pixelPos);
-			if(pixelIndex > -1) {
-
-				Common common = GetNode("/root/Common") as Common;
-				PixelGroup pixel = pixelList[pixelIndex];
-
-				switch(common.currentTool) {
-
-					case(Common.Tools.TOOL_PENCIL):
-
-						pixel.color = common.selectedColor;
-						break;
-
-					case (Common.Tools.TOOL_ERASER):
-
-						pixel.color = Colors.Transparent;
-						break;
-				}
+				Common.self.ModifyPixel(Common.self.selectedColor, pixelPos);
 			}
 		}
 
@@ -176,27 +125,10 @@ namespace MSP{
 			// The position of the pixel on the grid
 			Vector2 realPos = (pos - cameraPos) / basePixelSize / pixelScale;
 
-			realPos.x = (realPos.x < gridSize.x) ? (int) realPos.x : -1;
-			realPos.y = (realPos.y < gridSize.y) ? (int) realPos.y : -1;
+			realPos.x = (realPos.x < Common.self.gridSize.x) ? (int) realPos.x : -1;
+			realPos.y = (realPos.y < Common.self.gridSize.y) ? (int) realPos.y : -1;
 
 			return realPos;
-		}
-
-		// Coverts a pixel position on the grid to the pixel index in the list (returns -1 if null)
-		private int PixelPositionToPixelIndex(Vector2 pixelPos) {
-
-			// Out of bounds on X
-			if((int) pixelPos.x < 0 || (int) pixelPos.x > gridSize.x) {
-
-				return -1;
-			}
-			// Out of bounds on Y
-			if((int) pixelPos.y < 0 || (int) pixelPos.y > gridSize.y) {
-		
-				return -1;
-			}
-			// Returns the pixel index
-			return (int) pixelPos.x + (int) pixelPos.y * ((int) gridSize.x);
 		}
 	}
 }
