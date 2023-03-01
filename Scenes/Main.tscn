@@ -36,12 +36,13 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Canvas" parent="Hbox/Column2" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_right = 334.0
 margin_bottom = 586.0
-stretch_mode = 0
 alignment_horizontal = 0
 alignment_vertical = 0
-gridSize = Vector2( 10, 10 )
+gridSize = Vector2( 100, 100 )
 
 [node name="Column3" type="VBoxContainer" parent="Hbox"]
 margin_left = 676.0

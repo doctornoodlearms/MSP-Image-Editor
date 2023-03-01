@@ -18,6 +18,8 @@ public class CanvasVar : AspectRatioContainer {
 			
 			canvas = GetNode("Container/Viewport/Canvas") as Canvas;
 
+			GD.Print((GetChild(0) as Control).RectSize);
+
 			Common.self.gridSize = gridSize;
 			canvas.zoomFactor = zoomFactor;
 			canvas.zoomMax = zoomMax;

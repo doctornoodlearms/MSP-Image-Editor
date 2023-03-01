@@ -1,5 +1,6 @@
 using Godot;
 using MSP.Actions;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace MSP{
 
@@ -23,13 +24,18 @@ namespace MSP{
 		float pixelScale = 1.0f;
 
 		// Camera values
-		bool cameraPan = false;
-		Vector2 cameraPos = new Vector2(0, 0);
+		bool canvasPan = false;
+		Vector2 canvasPos = new Vector2(0, 0);
 
-		public  void Setup(){
+		public void Setup(){
 
 			// Update the tick rate to update every frame
 			renderTickRate = 1 / 60;
+		}
+
+		public override void _Ready() {
+
+			base._Ready();
 		}
 
 		public override void _Process(float delta) {
@@ -51,6 +57,8 @@ namespace MSP{
 				return;
 			}
 
+
+
 			// Render each pixel
 			for(int i = 0; i < Common.self.pixelList.Length; i++) {
 
@@ -60,8 +68,20 @@ namespace MSP{
 
 				PixelGroup pixel = Common.self.pixelList[i];
 
+				Vector2 realPixelPos = PixelPositionToGlobalPosition(pixel.position);
+
+				// Rendering optimization
+				if(canvasPos.x < 0 - realPixelPos.x || canvasPos.x > (RectSize.x + pixelScale * basePixelSize.x) - realPixelPos.x) {
+
+					continue;
+				}
+				if(canvasPos.y < 0 - realPixelPos.y || canvasPos.y > (RectSize.y + pixelScale * basePixelSize.y) - realPixelPos.y) {
+
+					continue;
+				}
+
 				Vector2 size = basePixelSize * pixelScale;
-				Vector2 position = cameraPos + pixel.position * size;
+				Vector2 position = canvasPos + pixel.position * size;
 
 				Color pixelColor = pixel.color;
 				DrawRect(new Rect2(position, size), pixelColor);
@@ -73,6 +93,7 @@ namespace MSP{
 				}
 			}
 
+			DrawRect(new Rect2(canvasPos, new Vector2(5, 5)), Colors.Blue);
 			DrawRect(new Rect2(Vector2.Zero, RectSize), Colors.Red, false, 5.0f);
 		}
 
@@ -84,16 +105,16 @@ namespace MSP{
 			pixelScale += (zoomIn - zoomOut) * zoomFactor;
 
 			// Enables / Disables the camera panning
-			cameraPan = Input.IsActionPressed("Camera_Pan");
+			canvasPan = Input.IsActionPressed("Camera_Pan");
 
 			// Pans the camera
-			if((@event is InputEventMouseMotion) && cameraPan) {
+			if((@event is InputEventMouseMotion) && canvasPan) {
 
 				InputEventMouseMotion mouseMotion = @event as InputEventMouseMotion;
-				cameraPos += mouseMotion.Relative;
+				canvasPos += mouseMotion.Relative;
 			}
 
-			if((@event is InputEventMouseMotion) && !cameraPan) {
+			if((@event is InputEventMouseMotion) && !canvasPan) {
 
 				InputEventMouseMotion mouseMotion = @event as InputEventMouseMotion;
 				int newPixelIndex = Common.self.PixelPositionToPixelIndex(GlobalPositionToPixelPosition(mouseMotion.Position));
@@ -117,18 +138,32 @@ namespace MSP{
 		private Vector2 GlobalPositionToPixelPosition(Vector2 pos) {
 
 			// Checks if position is out of bounds of the camera 
-			if(pos.x < cameraPos.x || pos.y < cameraPos.y) {
+			if(pos.x < canvasPos.x || pos.y < canvasPos.y) {
 
 				return new Vector2(-1, -1);
 			}
 
 			// The position of the pixel on the grid
-			Vector2 realPos = (pos - cameraPos) / basePixelSize / pixelScale;
+			Vector2 realPos = (pos - canvasPos) / basePixelSize / pixelScale;
 
 			realPos.x = (realPos.x < Common.self.gridSize.x) ? (int) realPos.x : -1;
 			realPos.y = (realPos.y < Common.self.gridSize.y) ? (int) realPos.y : -1;
 
 			return realPos;
 		}
+
+		private Vector2 PixelPositionToGlobalPosition(Vector2 pixelPos) {
+
+			Vector2 position = new Vector2();
+
+			Vector2 size = pixelScale * basePixelSize;
+
+			position.x = pixelPos.x * size.x + size.x;
+			position.y = pixelPos.y * size.y + size.y;
+
+			return position;
+		}
+
+
 	}
 }
