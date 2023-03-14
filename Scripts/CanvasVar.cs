@@ -14,13 +14,10 @@ public class CanvasVar : AspectRatioContainer {
 
 		public override void _Ready() {
 
-			Common.self.SetGridSize(gridSize);
+			Common.self.SetGridSize(new Vector2(gridSize.x, gridSize.y - 1));
 			
 			canvas = GetNode("Container/Viewport/Canvas") as Canvas;
 
-			GD.Print((GetChild(0) as Control).RectSize);
-
-			Common.self.gridSize = gridSize;
 			canvas.zoomFactor = zoomFactor;
 			canvas.zoomMax = zoomMax;
 			canvas.zoomMin = zoomMin;

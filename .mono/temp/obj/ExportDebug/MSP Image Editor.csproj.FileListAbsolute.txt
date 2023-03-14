@@ -1,0 +1,12 @@
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\bin\ExportDebug\MSP Image Editor.dll
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\bin\ExportDebug\MSP Image Editor.pdb
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\bin\ExportDebug\Debugger.dll
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\bin\ExportDebug\Debugger.pdb
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\obj\ExportDebug\MSP Image Editor.csproj.AssemblyReference.cache
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\obj\ExportDebug\MSP Image Editor.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\obj\ExportDebug\MSP Image Editor.AssemblyInfoInputs.cache
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\obj\ExportDebug\MSP Image Editor.AssemblyInfo.cs
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\obj\ExportDebug\MSP Image Editor.csproj.CoreCompileInputs.cache
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\obj\ExportDebug\MSP Image Editor.csproj.CopyComplete
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\obj\ExportDebug\MSP Image Editor.dll
+C:\Users\joeth\Documents\MSP Image Editor\.mono\temp\obj\ExportDebug\MSP Image Editor.pdb

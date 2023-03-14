@@ -147,7 +147,7 @@ namespace MSP{
 			Vector2 realPos = (pos - canvasPos) / basePixelSize / pixelScale;
 
 			realPos.x = (realPos.x < Common.self.gridSize.x) ? (int) realPos.x : -1;
-			realPos.y = (realPos.y < Common.self.gridSize.y) ? (int) realPos.y : -1;
+			realPos.y = (realPos.y < Common.self.gridSize.y + 1) ? (int) realPos.y : -1;
 
 			return realPos;
 		}

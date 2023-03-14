@@ -10,11 +10,28 @@ namespace MSP.Actions{
 
 		Array<Action> history = new Array<Action>();
 
+		Timer revertActionTimer;
+
+		public override void _Ready() {
+			
+			revertActionTimer = new Timer();
+			revertActionTimer.WaitTime = 0.3f;
+			revertActionTimer.OneShot = false;
+			revertActionTimer.Connect("timeout", this, nameof(onRevertActionTimeout));
+			AddChild(revertActionTimer);
+			base._Ready();
+		}
+
 		public override void _Input(InputEvent @event) {
 
 			if(Input.IsActionJustPressed("Action_Redo") && Input.IsPhysicalKeyPressed((int) KeyList.Control)) {
 
-				RevertAction();
+				onRevertActionTimeout();
+				revertActionTimer?.Start();
+			}
+			if(Input.IsActionJustReleased("Action_Redo") || !Input.IsPhysicalKeyPressed((int) KeyList.Control)) {
+
+				revertActionTimer.Stop();
 			}
 			base._Input(@event);
 		}
@@ -24,7 +41,7 @@ namespace MSP.Actions{
 			history.Add(new Action(color, index));
 		}
 
-		void RevertAction() {
+		void onRevertActionTimeout() {
 
 			if(history.Count < 1) {
 

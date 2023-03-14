@@ -24,6 +24,14 @@ namespace MSP {
 
 		public Color selectedColor = new Color(0, 0, 0);
 
+		public override void _Ready() {
+
+			FileDialog fileDialog = GetNode("../Background/FileDialog") as FileDialog;
+			fileDialog.CurrentDir = OS.GetSystemDir(OS.SystemDir.Pictures);
+			fileDialog.Connect("file_selected", this, nameof(SaveFile));
+			base._Ready();
+		}
+
 		public override void _EnterTree() {
 
 			self = this;
@@ -35,12 +43,13 @@ namespace MSP {
 			gridSize = size;
 			pixelList = new PixelGroup[PixelPositionToPixelIndex(size)];
 
-			for(int y = 0; y < size.y; y++) {
+			for(int y = 0; y <= size.y; y++) {
 
 				for(int x = 0; x < size.x; x++) {
 
 					PixelGroup newPixel = new PixelGroup(x, y);
 					newPixel.color = Colors.White;
+
 					pixelList[PixelPositionToPixelIndex(new Vector2(x, y))] = newPixel;
 				}
 			}
@@ -121,6 +130,28 @@ namespace MSP {
 			}
 			// Returns the pixel index
 			return (int) pixelPos.x + (int) pixelPos.y * ((int) gridSize.x);
+		}
+
+		public void SaveFile(string path) {
+
+			GD.Print("Saving File");
+
+			Image image = new Image();
+
+			image.Create((int) gridSize.x, (int) gridSize.y + 1, false, Image.Format.Rgb8);
+			image.Lock();
+			foreach(PixelGroup pixel in pixelList) {
+			
+				image.SetPixelv(pixel.position, pixel.color);
+			}
+			
+			image.Unlock();
+			image.SavePng(path);
+		}
+
+		private void onFileDialogFileSelected(string path) {
+
+			GD.Print(path);
 		}
 	}
 }
