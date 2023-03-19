@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-public class MenuButton : Godot.MenuButton {
+public class File : Godot.MenuButton {
 
 	public override void _Ready() {
 

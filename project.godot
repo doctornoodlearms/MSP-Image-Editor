@@ -11,13 +11,14 @@ config_version=4
 [application]
 
 config/name="MSP Image Editor"
-run/main_scene="res://Scenes/Main.tscn"
+run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-Common="*res://Scripts/Global/Common.cs"
-ActionHistory="*res://Scripts/Global/ActionHistory.cs"
+Common="*res://Global/Common.cs"
+ActionHistory="*res://Global/ActionHistory.cs"
+ToolProperties="*res://Global/ToolProperties.cs"
 
 [gui]
 

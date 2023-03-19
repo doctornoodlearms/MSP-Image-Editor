@@ -57,8 +57,6 @@ namespace MSP{
 				return;
 			}
 
-
-
 			// Render each pixel
 			for(int i = 0; i < Common.self.pixelList.Length; i++) {
 
@@ -85,19 +83,19 @@ namespace MSP{
 
 				Color pixelColor = pixel.color;
 				DrawRect(new Rect2(position, size), pixelColor);
-
-				if(i == hoverPixelIndex) {
-
-					float borderWidth = 100.0f * (pixelScale / basePixelSize.x);
-					DrawRect(new Rect2(position + new Vector2(borderWidth, borderWidth) / 2, size - new Vector2(borderWidth, borderWidth)), Colors.Black, false, borderWidth);
-				}
 			}
 
-			DrawRect(new Rect2(canvasPos, new Vector2(5, 5)), Colors.Blue);
+			// Render pixel border for the hovered pixels
+			float borderWidth = 2.0f;
+			Vector2 borderSize = basePixelSize * pixelScale;
+			Vector2 borderPosition = canvasPos + GlobalPositionToPixelPosition(GetGlobalMousePosition()) * borderSize;
+			DrawRect(new Rect2(borderPosition, borderSize * ToolProperties.cursorSize), Colors.Black, false, borderWidth);
+
 			DrawRect(new Rect2(Vector2.Zero, RectSize), Colors.Red, false, 5.0f);
 		}
 
-		public override void _Input(InputEvent @event) {
+
+		public override void _GuiInput(InputEvent @event) {
 
 			// Modify the pixel scale when zooming in and out
 			int zoomIn = Input.IsActionJustPressed("Camera_Zoom_In") && pixelScale < zoomMax ? 1 : 0;
@@ -136,12 +134,6 @@ namespace MSP{
 
 		// Converts a global position to the position of a pixel relative to the camera
 		private Vector2 GlobalPositionToPixelPosition(Vector2 pos) {
-
-			// Checks if position is out of bounds of the camera 
-			if(pos.x < canvasPos.x || pos.y < canvasPos.y) {
-
-				return new Vector2(-1, -1);
-			}
 
 			// The position of the pixel on the grid
 			Vector2 realPos = (pos - canvasPos) / basePixelSize / pixelScale;

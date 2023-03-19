@@ -4,7 +4,7 @@ using Godot;
 
 namespace MSP {
 
-	public class ColorPickerScene : ColorPicker {
+	public class ColorPicker_Panel : ColorPicker {
 
 		public override void _Ready() {
 
