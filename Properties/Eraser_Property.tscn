@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Properties/Pencil_Property.cs" type="Script" id=1]
 
-[node name="Pencil_Property" type="VBoxContainer"]
+[node name="Eraser_Property" type="VBoxContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )

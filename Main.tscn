@@ -80,6 +80,7 @@ margin_bottom = 562.0
 alignment_horizontal = 0
 alignment_vertical = 0
 gridSize = Vector2( 100, 100 )
+basePixelSize = Vector2( 5, 5 )
 
 [node name="Column3" type="VBoxContainer" parent="VBoxContainer/HSplit"]
 margin_left = 511.0

@@ -28,6 +28,10 @@ public class Properties_Panel : Node {
 			case Common.Tools.TOOL_PENCIL:
 				sceneLocation = string.Format(sceneLocation, "Pencil");
 				break;
+
+			case Common.Tools.TOOL_ERASER:
+				sceneLocation = string.Format(sceneLocation, "Eraser");
+				break;
 		}
 
 		if(!dir.FileExists(sceneLocation)) {

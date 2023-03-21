@@ -1,6 +1,6 @@
 using Godot;
 
-public class Pencil_Property : VBoxContainer {
+public class Eraser_Property : VBoxContainer {
 
 	HSlider sizeValueSlider;
 	LineEdit sizeValueEdit;
@@ -31,7 +31,6 @@ public class Pencil_Property : VBoxContainer {
 	void onSizeSlider_Changed(float value) {
 
 		UpdateValue((int) value);
-
 	}
 
 	void onSizeEdit_Changed(string text) {

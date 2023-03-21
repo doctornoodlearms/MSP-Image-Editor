@@ -1,0 +1,2 @@
+﻿53323
+C:/Program Files/Godot CS/GodotCS.exe

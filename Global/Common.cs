@@ -23,7 +23,7 @@ namespace MSP {
 			TOOL_ERASER,
 			TOOL_PICKER
 		}
-		private Tools currentTool = Tools.TOOL_PENCIL;
+		public Tools currentTool = Tools.TOOL_PENCIL;
 
 		public Color selectedColor = new Color(0, 0, 0);
 
@@ -96,13 +96,42 @@ namespace MSP {
 			}
 		}
 
-		public void ModifyPixel(Color color, Vector2 pixelPos) {
+		public void UseTool(Vector2 pixelPos) {
+
+			int pixelIndex = PixelPositionToPixelIndex(pixelPos);
+			if(pixelIndex == -1) {
+
+				return;
+			}
+
+			PixelGroup pixel = pixelList[pixelIndex];
+
+			switch(currentTool) {
+
+				case (Tools.TOOL_PICKER):
+
+					SetColor(pixel.color);
+					break;
+
+				case (Tools.TOOL_PENCIL):
+
+					ModifyPixel(selectedColor, pixelPos);
+					break;
+
+				case (Tools.TOOL_ERASER):
+
+					ModifyPixel(Colors.White, pixelPos);
+					break;
+			}
+		}
+
+		private void ModifyPixel(Color color, Vector2 pixelPos) {
 
 			int cursorSize = ToolProperties.cursorSize;
 
-			Vector2 endPixelPos = new Vector2(pixelPos.x + cursorSize - 1, pixelPos.y + cursorSize - 1);
+			pixelPos = pixelPos - Vector2.One * Mathf.Floor(cursorSize / 2);
 
-			Common common = GetNode("/root/Common") as Common;
+			Vector2 endPixelPos = new Vector2(pixelPos.x + cursorSize - 1, pixelPos.y + cursorSize - 1);
 
 			for(int y = (int) pixelPos.y; y <= (int) endPixelPos.y; y++) {
 
@@ -117,23 +146,7 @@ namespace MSP {
 					PixelGroup pixel = pixelList[pixelIndex];
 					(GetNode("/root/ActionHistory") as ActionHistory).RecordAction(pixel.color, pixelIndex);
 
-					switch(common.currentTool) {
-
-						case (Common.Tools.TOOL_PENCIL):
-
-							pixel.color = color;
-							break;
-
-						case (Common.Tools.TOOL_ERASER):
-
-							pixel.color = Colors.White;
-							break;
-
-						case (Common.Tools.TOOL_PICKER):
-
-							common.SetColor(pixel.color);
-							break;
-					}
+					pixel.color = color;
 				}
 			}
 		}

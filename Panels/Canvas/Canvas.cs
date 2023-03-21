@@ -87,9 +87,10 @@ namespace MSP{
 
 			// Render pixel border for the hovered pixels
 			float borderWidth = 2.0f;
+			int cursorSize = Common.self.currentTool == Common.Tools.TOOL_PICKER ? 1 : ToolProperties.cursorSize;
 			Vector2 borderSize = basePixelSize * pixelScale;
-			Vector2 borderPosition = canvasPos + GlobalPositionToPixelPosition(GetGlobalMousePosition()) * borderSize;
-			DrawRect(new Rect2(borderPosition, borderSize * ToolProperties.cursorSize), Colors.Black, false, borderWidth);
+			Vector2 borderPosition = canvasPos + (GlobalPositionToPixelPosition(GetGlobalMousePosition()) - Vector2.One * Mathf.Floor(cursorSize / 2)) * borderSize;
+			DrawRect(new Rect2(borderPosition, borderSize * cursorSize), Colors.Black, false, borderWidth);
 
 			DrawRect(new Rect2(Vector2.Zero, RectSize), Colors.Red, false, 5.0f);
 		}
@@ -118,7 +119,7 @@ namespace MSP{
 				int newPixelIndex = Common.self.PixelPositionToPixelIndex(GlobalPositionToPixelPosition(mouseMotion.Position));
 				if(Input.IsActionPressed("Pixel_Modify") && newPixelIndex != hoverPixelIndex) {
 
-					Common.self.ModifyPixel(Common.self.selectedColor, GlobalPositionToPixelPosition(mouseMotion.Position));
+					Common.self.UseTool(GlobalPositionToPixelPosition(mouseMotion.Position));
 				}
 				hoverPixelIndex = newPixelIndex;
 				
@@ -128,7 +129,7 @@ namespace MSP{
 			if(Input.IsActionJustPressed("Pixel_Modify")) {
 
 				Vector2 pixelPos = GlobalPositionToPixelPosition(GetGlobalMousePosition());
-				Common.self.ModifyPixel(Common.self.selectedColor, pixelPos);
+				Common.self.UseTool(pixelPos);
 			}
 		}
 
