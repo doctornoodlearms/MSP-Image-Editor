@@ -120,7 +120,7 @@ namespace MSP {
 
 				case (Tools.TOOL_ERASER):
 
-					ModifyPixel(Colors.White, pixelPos);
+					ModifyPixel(Colors.Transparent, pixelPos);
 					break;
 			}
 		}
@@ -133,6 +133,8 @@ namespace MSP {
 
 			Vector2 endPixelPos = new Vector2(pixelPos.x + cursorSize - 1, pixelPos.y + cursorSize - 1);
 
+			int pixelsDrawn = 0;
+
 			for(int y = (int) pixelPos.y; y <= (int) endPixelPos.y; y++) {
 
 				for(int x = (int) pixelPos.x; x <= (int) endPixelPos.x; x++) {
@@ -144,10 +146,21 @@ namespace MSP {
 					}
 
 					PixelGroup pixel = pixelList[pixelIndex];
+
+					if(pixel.color == color) {
+
+						continue;
+					}
 					(GetNode("/root/ActionHistory") as ActionHistory).RecordAction(pixel.color, pixelIndex);
+					pixelsDrawn++;
 
 					pixel.color = color;
 				}
+			}
+
+			if(cursorSize > 1) {
+
+				(GetNode("/root/ActionHistory") as ActionHistory).RecordRepeatAction(pixelsDrawn);
 			}
 		}
 

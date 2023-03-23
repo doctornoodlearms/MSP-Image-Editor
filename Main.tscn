@@ -36,16 +36,16 @@ margin_right = 1010.0
 margin_bottom = 586.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+split_offset = 200
 
 [node name="Hsplit" type="HSplitContainer" parent="VBoxContainer/HSplit"]
-margin_right = 499.0
+margin_right = 690.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-split_offset = -207
 
 [node name="Column1" type="VBoxContainer" parent="VBoxContainer/HSplit/Hsplit"]
-margin_right = 143.0
+margin_right = 339.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -53,21 +53,22 @@ size_flags_vertical = 3
 [node name="ToolScene" parent="VBoxContainer/HSplit/Hsplit/Column1" instance=ExtResource( 5 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 143.0
-margin_bottom = 558.0
+margin_right = 339.0
+margin_bottom = 44.0
 size_flags_horizontal = 3
-size_flags_vertical = 3
 
 [node name="Properties_Panel" parent="VBoxContainer/HSplit/Hsplit/Column1" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 562.0
-margin_right = 143.0
+margin_top = 48.0
+margin_right = 339.0
 margin_bottom = 562.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Column2" type="VBoxContainer" parent="VBoxContainer/HSplit/Hsplit"]
-margin_left = 155.0
-margin_right = 499.0
+margin_left = 351.0
+margin_right = 690.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -75,7 +76,7 @@ size_flags_vertical = 3
 [node name="Canvas" parent="VBoxContainer/HSplit/Hsplit/Column2" instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 344.0
+margin_right = 339.0
 margin_bottom = 562.0
 alignment_horizontal = 0
 alignment_vertical = 0
@@ -83,7 +84,7 @@ gridSize = Vector2( 100, 100 )
 basePixelSize = Vector2( 5, 5 )
 
 [node name="Column3" type="VBoxContainer" parent="VBoxContainer/HSplit"]
-margin_left = 511.0
+margin_left = 702.0
 margin_right = 1010.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
@@ -94,10 +95,11 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 0.0
-margin_right = 499.0
+margin_right = 308.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+edit_alpha = true
 
 [node name="Columns" type="HBoxContainer" parent="VBoxContainer"]
 visible = false

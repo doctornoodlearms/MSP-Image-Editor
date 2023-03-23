@@ -1,14 +1,15 @@
 using Godot;
 using Godot.Collections;
 using MSP.Tools;
+using static MSP.Actions.ActionHistory;
 
 namespace MSP.Actions{
 
 	public class ActionHistory : Node {
 
-		[Signal] public delegate void RepeatAction(Color color, int index); 
+		//[Signal] public delegate void ReverseAction(Color color, int index);
 
-		Array<Action> history = new Array<Action>();
+		Array<Object> history = new Array<Object>();
 
 		Timer revertActionTimer;
 
@@ -41,6 +42,11 @@ namespace MSP.Actions{
 			history.Add(new Action(color, index));
 		}
 
+		public void RecordRepeatAction(int repeatCount) {
+
+			history.Add(new RepeatAction(repeatCount));
+		}
+
 		void onRevertActionTimeout() {
 
 			if(history.Count < 1) {
@@ -48,9 +54,35 @@ namespace MSP.Actions{
 				return;
 			}
 
-			Action currentAction = history[history.Count - 1];
+			Object action = history[history.Count - 1];
 
-			Common.self.pixelList[currentAction.pixelIndex].color = currentAction.color;
+			if(action is Action) {
+
+				ReverseAction((Action) action);
+				return;
+			}
+
+			if(action is RepeatAction) {
+
+
+				RepeatAction repeatAction = (RepeatAction) action;
+
+				int removeCount = repeatAction.repeatCount;
+				history.RemoveAt(history.Count - 1);
+
+				for(int i = 0; i < removeCount; i++) {
+
+					ReverseAction((Action) history[history.Count - 1]);
+				}
+
+				return;
+				
+			}
+		}
+
+		void ReverseAction(Action action) {
+			
+			Common.self.pixelList[action.pixelIndex].color = action.color;
 			history.RemoveAt(history.Count - 1);
 		}
 	}

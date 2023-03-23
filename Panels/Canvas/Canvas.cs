@@ -1,6 +1,5 @@
 using Godot;
 using MSP.Actions;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace MSP{
 
@@ -92,14 +91,14 @@ namespace MSP{
 			Vector2 borderPosition = canvasPos + (GlobalPositionToPixelPosition(GetGlobalMousePosition()) - Vector2.One * Mathf.Floor(cursorSize / 2)) * borderSize;
 			DrawRect(new Rect2(borderPosition, borderSize * cursorSize), Colors.Black, false, borderWidth);
 
-			DrawRect(new Rect2(Vector2.Zero, RectSize), Colors.Red, false, 5.0f);
+			DrawRect(new Rect2(canvasPos, Common.self.gridSize * pixelScale * basePixelSize), Colors.Red, false, borderWidth);
 		}
 
 
 		public override void _GuiInput(InputEvent @event) {
 
 			// Modify the pixel scale when zooming in and out
-			int zoomIn = Input.IsActionJustPressed("Camera_Zoom_In") && pixelScale < zoomMax ? 1 : 0;
+			int zoomIn = Input.IsActionJustPressed("Camera_Zoom_In") ? 1 : 0;
 			int zoomOut = Input.IsActionJustPressed("Camera_Zoom_Out") && pixelScale > zoomMin ? 1 : 0; 
 			pixelScale += (zoomIn - zoomOut) * zoomFactor;
 
