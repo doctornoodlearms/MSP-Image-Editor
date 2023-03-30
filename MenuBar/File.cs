@@ -1,7 +1,7 @@
-using System;
 using Godot;
+using MSP;
 
-public class File : Godot.MenuButton {
+public class File : MenuButton {
 
 	public override void _Ready() {
 
@@ -19,6 +19,7 @@ public class File : Godot.MenuButton {
 		switch(id) {
 		
 			case 0:
+				Common.self.drawDisabled = true;
 				(GetTree().Root.GetNode("Background/FileDialog") as FileDialog).PopupCentered();
 				break;
 		}

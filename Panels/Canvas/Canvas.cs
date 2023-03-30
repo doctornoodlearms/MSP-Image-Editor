@@ -39,6 +39,8 @@ namespace MSP{
 
 		public override void _Process(float delta) {
 
+			//GetParent<Viewport>().GuiDisableInput = Common.self.drawDisabled;
+
 			// Update the tick for the rendering
 			renderTickCount += delta;
 			if(renderTickCount >= renderTickRate) {
@@ -94,12 +96,11 @@ namespace MSP{
 			DrawRect(new Rect2(canvasPos, Common.self.gridSize * pixelScale * basePixelSize), Colors.Red, false, borderWidth);
 		}
 
-
 		public override void _GuiInput(InputEvent @event) {
 
 			// Modify the pixel scale when zooming in and out
 			int zoomIn = Input.IsActionJustPressed("Camera_Zoom_In") ? 1 : 0;
-			int zoomOut = Input.IsActionJustPressed("Camera_Zoom_Out") && pixelScale > zoomMin ? 1 : 0; 
+			int zoomOut = Input.IsActionJustPressed("Camera_Zoom_Out") && pixelScale > zoomMin ? 1 : 0;
 			pixelScale += (zoomIn - zoomOut) * zoomFactor;
 
 			// Enables / Disables the camera panning
@@ -121,7 +122,7 @@ namespace MSP{
 					Common.self.UseTool(GlobalPositionToPixelPosition(mouseMotion.Position));
 				}
 				hoverPixelIndex = newPixelIndex;
-				
+
 			}
 
 			// Modifies a pixel
@@ -132,7 +133,7 @@ namespace MSP{
 			}
 		}
 
-		// Converts a global position to the position of a pixel relative to the camera
+		//Converts a global position to the position of a pixel relative to the camera
 		private Vector2 GlobalPositionToPixelPosition(Vector2 pos) {
 
 			// The position of the pixel on the grid

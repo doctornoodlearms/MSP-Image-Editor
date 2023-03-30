@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Panels/Canvas/Canvas.cs" type="Script" id=1]
 [ext_resource path="res://Panels/Canvas/CanvasSettings_Panel.cs" type="Script" id=2]
+[ext_resource path="res://Panels/Canvas/CanvasViewport.cs" type="Script" id=3]
 
 [node name="AspectRatio" type="AspectRatioContainer"]
 anchor_right = 1.0
@@ -15,6 +16,7 @@ script = ExtResource( 2 )
 margin_top = -212.0
 margin_right = 1024.0
 margin_bottom = 812.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
@@ -26,10 +28,12 @@ hdr = false
 disable_3d = true
 usage = 0
 render_target_update_mode = 3
+script = ExtResource( 3 )
 
 [node name="Canvas" type="Control" parent="Container/Viewport"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 1 )

@@ -27,5 +27,11 @@ public class CanvasSettings_Panel : AspectRatioContainer {
 
 			base._Ready();
 		}
+
+		public override void _GuiInput(InputEvent @event) {
+			
+			GetNode<Control>("Container/Viewport/Canvas")._GuiInput(@event);
+			base._GuiInput(@event);
+		}
 	}
 }

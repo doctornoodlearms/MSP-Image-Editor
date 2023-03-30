@@ -16,6 +16,8 @@ namespace MSP {
 
 		public Vector2 gridSize = new Vector2(1, 1);
 
+		public bool drawDisabled = false;
+
 		public enum Tools {
 
 			TOOL_NONE,
@@ -32,6 +34,7 @@ namespace MSP {
 			FileDialog fileDialog = GetNode("../Background/FileDialog") as FileDialog;
 			fileDialog.CurrentDir = OS.GetSystemDir(OS.SystemDir.Pictures);
 			fileDialog.Connect("file_selected", this, nameof(SaveFile));
+			fileDialog.Connect("popup_hide", this, nameof(onFileDialog_PopupHide));
 			base._Ready();
 		}
 
@@ -198,9 +201,9 @@ namespace MSP {
 			image.SavePng(path);
 		}
 
-		private void onFileDialogFileSelected(string path) {
+		void onFileDialog_PopupHide() {
 
-			GD.Print(path);
+			drawDisabled = false;
 		}
 	}
 }
