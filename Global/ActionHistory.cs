@@ -37,9 +37,9 @@ namespace MSP.Actions{
 			base._Input(@event);
 		}
 
-		public void RecordAction(Color color, int index) {
+		public void RecordAction(Color color, int pixelIndex, int layerIndex) {
 
-			history.Add(new Action(color, index));
+			history.Add(new Action(color, pixelIndex, layerIndex));
 		}
 
 		public void RecordRepeatAction(int repeatCount) {
@@ -82,7 +82,7 @@ namespace MSP.Actions{
 
 		void ReverseAction(Action action) {
 			
-			Common.self.pixelList[action.pixelIndex].color = action.color;
+			Common.self.pixelList[action.pixelIndex].setColor(action.color, action.layerIndex);
 			history.RemoveAt(history.Count - 1);
 		}
 	}

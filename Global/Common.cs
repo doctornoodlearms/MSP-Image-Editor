@@ -18,6 +18,12 @@ namespace MSP {
 
 		public bool drawDisabled = false;
 
+		public int currentLayer = 0;
+		public LayerUpdate layerUpdate = new LayerUpdate(-1, false);
+		public int removeLayerQueue = -1;
+
+		public static Color nullColor = new Color(-1, -1, -1, -1);
+
 		public enum Tools {
 
 			TOOL_NONE,
@@ -54,7 +60,7 @@ namespace MSP {
 				for(int x = 0; x < size.x; x++) {
 
 					PixelGroup newPixel = new PixelGroup(x, y);
-					newPixel.color = Colors.White;
+					newPixel.setColor(Colors.White);
 
 					pixelList[PixelPositionToPixelIndex(new Vector2(x, y))] = newPixel;
 				}
@@ -102,18 +108,22 @@ namespace MSP {
 		public void UseTool(Vector2 pixelPos) {
 
 			int pixelIndex = PixelPositionToPixelIndex(pixelPos);
-			if(pixelIndex == -1) {
+			//if(pixelIndex == -1) {
 
-				return;
-			}
+			//	return;
+			//}
 
-			PixelGroup pixel = pixelList[pixelIndex];
+			//PixelGroup pixel = pixelList[pixelIndex];
 
 			switch(currentTool) {
 
 				case (Tools.TOOL_PICKER):
 
-					SetColor(pixel.color);
+					if(pixelIndex > -1) {
+
+						break;
+					}
+					SetColor(pixelList[pixelIndex].color);
 					break;
 
 				case (Tools.TOOL_PENCIL):
@@ -123,7 +133,7 @@ namespace MSP {
 
 				case (Tools.TOOL_ERASER):
 
-					ModifyPixel(Colors.Transparent, pixelPos);
+					ModifyPixel(Common.nullColor, pixelPos);
 					break;
 			}
 		}
@@ -149,15 +159,14 @@ namespace MSP {
 					}
 
 					PixelGroup pixel = pixelList[pixelIndex];
-
 					if(pixel.color == color) {
 
 						continue;
 					}
-					(GetNode("/root/ActionHistory") as ActionHistory).RecordAction(pixel.color, pixelIndex);
+					(GetNode("/root/ActionHistory") as ActionHistory).RecordAction(pixel.color, pixelIndex, currentLayer);
 					pixelsDrawn++;
 
-					pixel.color = color;
+					pixel.setColor(color, currentLayer);
 				}
 			}
 

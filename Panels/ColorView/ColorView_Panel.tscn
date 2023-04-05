@@ -23,6 +23,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+edit_alpha = false
 
 [node name="SecondaryColor" type="ColorPickerButton" parent="ColorList"]
 margin_left = 514.0
@@ -33,3 +34,4 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 color = Color( 1, 1, 1, 1 )
+edit_alpha = false

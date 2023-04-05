@@ -9,8 +9,6 @@ namespace MSP{
 		float renderTickRate = 0;
 		float renderTickCount = 0;
 
-		int hoverPixelIndex = 1;
-
 		// The size of a pixel at the default zoom level
 		public Vector2 basePixelSize = new Vector2(50, 50);
 
@@ -67,6 +65,17 @@ namespace MSP{
 
 				PixelGroup pixel = Common.self.pixelList[i];
 
+				if(Common.self.removeLayerQueue > -1) {
+				
+					pixel.RemoveLayer(Common.self.removeLayerQueue);
+				}
+
+				if(Common.self.layerUpdate.index > -1) {
+
+					LayerUpdate layerUpdate = Common.self.layerUpdate;
+					pixel.SetLayerVisibility(layerUpdate.index, layerUpdate.visible);
+				}
+
 				Vector2 realPixelPos = PixelPositionToGlobalPosition(pixel.position);
 
 				// Rendering optimization
@@ -86,11 +95,14 @@ namespace MSP{
 				DrawRect(new Rect2(position, size), pixelColor);
 			}
 
+			Common.self.removeLayerQueue = -1;
+			Common.self.layerUpdate = new LayerUpdate(-1, false);
+
 			// Render pixel border for the hovered pixels
 			float borderWidth = 2.0f;
 			int cursorSize = Common.self.currentTool == Common.Tools.TOOL_PICKER ? 1 : ToolProperties.cursorSize;
 			Vector2 borderSize = basePixelSize * pixelScale;
-			Vector2 borderPosition = canvasPos + (GlobalPositionToPixelPosition(GetGlobalMousePosition()) - Vector2.One * Mathf.Floor(cursorSize / 2)) * borderSize;
+			Vector2 borderPosition = canvasPos + (GlobalPositionToPixelPosition(GetGlobalMousePosition(), false) - Vector2.One * Mathf.Floor(cursorSize / 2)) * borderSize;
 			DrawRect(new Rect2(borderPosition, borderSize * cursorSize), Colors.Black, false, borderWidth);
 
 			DrawRect(new Rect2(canvasPos, Common.self.gridSize * pixelScale * basePixelSize), Colors.Red, false, borderWidth);
@@ -116,28 +128,30 @@ namespace MSP{
 			if((@event is InputEventMouseMotion) && !canvasPan) {
 
 				InputEventMouseMotion mouseMotion = @event as InputEventMouseMotion;
-				int newPixelIndex = Common.self.PixelPositionToPixelIndex(GlobalPositionToPixelPosition(mouseMotion.Position));
-				if(Input.IsActionPressed("Pixel_Modify") && newPixelIndex != hoverPixelIndex) {
+				if(Input.IsActionPressed("Pixel_Modify")) {
 
-					Common.self.UseTool(GlobalPositionToPixelPosition(mouseMotion.Position));
+					Common.self.UseTool(GlobalPositionToPixelPosition(mouseMotion.Position, false));
 				}
-				hoverPixelIndex = newPixelIndex;
-
 			}
 
 			// Modifies a pixel
 			if(Input.IsActionJustPressed("Pixel_Modify")) {
 
-				Vector2 pixelPos = GlobalPositionToPixelPosition(GetGlobalMousePosition());
+				Vector2 pixelPos = GlobalPositionToPixelPosition(GetGlobalMousePosition(), false);
 				Common.self.UseTool(pixelPos);
 			}
 		}
 
 		//Converts a global position to the position of a pixel relative to the camera
-		private Vector2 GlobalPositionToPixelPosition(Vector2 pos) {
+		private Vector2 GlobalPositionToPixelPosition(Vector2 pos, bool boundRestricted = true) {
 
 			// The position of the pixel on the grid
 			Vector2 realPos = (pos - canvasPos) / basePixelSize / pixelScale;
+
+			if(!boundRestricted) {
+
+				return realPos;
+			}
 
 			realPos.x = (realPos.x < Common.self.gridSize.x) ? (int) realPos.x : -1;
 			realPos.y = (realPos.y < Common.self.gridSize.y + 1) ? (int) realPos.y : -1;
@@ -156,7 +170,5 @@ namespace MSP{
 
 			return position;
 		}
-
-
 	}
 }

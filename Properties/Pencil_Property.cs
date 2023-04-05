@@ -2,42 +2,24 @@ using Godot;
 
 public class Pencil_Property : VBoxContainer {
 
-	HSlider sizeValueSlider;
-	LineEdit sizeValueEdit;
+	Slider_BaseProperty sizeProperty;
+	Slider_BaseProperty randProperty;
 
 	public override void _Ready() {
 
-		sizeValueSlider = GetNode<HSlider>("Size/ValueSlider");
-		sizeValueEdit = GetNode<LineEdit>("Size/ValueEdit");
+		GetNode<Slider_BaseProperty>("Size").Connect(nameof(Slider_BaseProperty.ValueChanged), this, nameof(onSize_Changed));
+		GetNode<Slider_BaseProperty>("RandColor").Connect(nameof(Slider_BaseProperty.ValueChanged), this, nameof(onRandColor_Changed));
 
-		UpdateValue(ToolProperties.cursorSize);
-
-		sizeValueSlider.Connect("value_changed", this, nameof(onSizeSlider_Changed));
-		sizeValueEdit.Connect("text_entered", this, nameof(onSizeEdit_Changed));
 		base._Ready();
 	}
 
-	void UpdateValue(int value) {
+	void onSize_Changed(float value) {
 
-		value = value < ToolProperties.maxCursorSize ? value : ToolProperties.maxCursorSize;
-		value = value < 1 ? 1 : value;
-
-		ToolProperties.cursorSize = value;
-
-		sizeValueEdit.Text = value.ToString() + "px";
-		sizeValueSlider.Value = value;
+		ToolProperties.cursorSize = (int) value;
 	}
 
-	void onSizeSlider_Changed(float value) {
+	void onRandColor_Changed(float value) {
 
-		UpdateValue((int) value);
-
-	}
-
-	void onSizeEdit_Changed(string text) {
-
-		text = text.Replace("px", "");
-		int value = int.Parse(text);
-		UpdateValue(value);
+		ToolProperties.colorRandomize = value / 100;
 	}
 }
