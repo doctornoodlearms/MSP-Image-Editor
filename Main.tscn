@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://MenuBar/File.cs" type="Script" id=1]
 [ext_resource path="res://Panels/PropertyViewer/Properties_Panel.tscn" type="PackedScene" id=2]
@@ -7,26 +7,32 @@
 [ext_resource path="res://Panels/Tools/Tools_Panel.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Panels/Layers/Layers_Panel.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Panels/ColorView/ColorView_Panel.tscn" type="PackedScene" id=7]
+[ext_resource path="res://MenuBar/Image.cs" type="Script" id=8]
+[ext_resource path="res://Popups/CanvasEdit.cs" type="Script" id=9]
 
-[node name="Background" type="PanelContainer"]
+[node name="Root" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="FileDialog" type="FileDialog" parent="."]
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 1017.0
-margin_bottom = 593.0
-size_flags_horizontal = 5
-size_flags_vertical = 5
-resizable = true
-access = 2
+[node name="Background" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Vbox" type="VBoxContainer" parent="."]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 1017.0
 margin_bottom = 593.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Header" type="HBoxContainer" parent="Vbox"]
 margin_right = 1010.0
@@ -38,9 +44,20 @@ margin_right = 35.0
 margin_bottom = 20.0
 text = "File"
 align = 0
-items = [ "Save File", null, 0, false, false, 0, 0, null, "", false ]
+items = [ "Export File", null, 0, false, false, 0, 0, null, "", false, "Save Project", null, 0, false, false, 1, 0, null, "", false, "Open Project", null, 0, false, false, 2, 0, null, "", false ]
 switch_on_hover = true
 script = ExtResource( 1 )
+
+[node name="Image" type="MenuButton" parent="Vbox/Header"]
+margin_left = 39.0
+margin_right = 91.0
+margin_bottom = 20.0
+focus_mode = 2
+text = "Image"
+align = 0
+items = [ "Canvas Size", null, 0, false, false, 0, 0, null, "", false ]
+switch_on_hover = true
+script = ExtResource( 8 )
 
 [node name="HSplit" type="HSplitContainer" parent="Vbox"]
 margin_top = 24.0
@@ -114,10 +131,10 @@ custom_constants/margin_left = 10
 visible = false
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 104.0
-margin_top = 254.0
-margin_right = 412.0
-margin_bottom = 666.0
+margin_left = 152.0
+margin_top = 302.0
+margin_right = 460.0
+margin_bottom = 714.0
 rect_clip_content = true
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -130,3 +147,119 @@ margin_top = 78.0
 margin_right = 299.0
 margin_bottom = 562.0
 size_flags_stretch_ratio = 6.5
+
+[node name="FileDialog" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -427.0
+margin_top = -255.0
+margin_right = 427.0
+margin_bottom = 255.0
+size_flags_horizontal = 2
+size_flags_vertical = 0
+resizable = true
+access = 2
+
+[node name="CanvasEdit" type="PanelContainer" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -67.0
+margin_top = -52.0
+margin_right = 87.0
+margin_bottom = 76.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource( 9 )
+
+[node name="Margin" type="MarginContainer" parent="CanvasEdit"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 147.0
+margin_bottom = 129.0
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+
+[node name="Vbox" type="VBoxContainer" parent="CanvasEdit/Margin"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 130.0
+margin_bottom = 112.0
+
+[node name="Label" type="Label" parent="CanvasEdit/Margin/Vbox"]
+margin_right = 120.0
+margin_bottom = 14.0
+text = "Canvas Size"
+align = 1
+
+[node name="SizeX" type="HBoxContainer" parent="CanvasEdit/Margin/Vbox"]
+margin_top = 18.0
+margin_right = 120.0
+margin_bottom = 42.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SizeX" type="Label" parent="CanvasEdit/Margin/Vbox/SizeX"]
+margin_left = 10.0
+margin_top = 5.0
+margin_right = 48.0
+margin_bottom = 19.0
+size_flags_horizontal = 6
+text = "Size X"
+
+[node name="LineEdit" type="LineEdit" parent="CanvasEdit/Margin/Vbox/SizeX"]
+margin_left = 62.0
+margin_right = 120.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="SizeY" type="HBoxContainer" parent="CanvasEdit/Margin/Vbox"]
+margin_top = 46.0
+margin_right = 120.0
+margin_bottom = 70.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SizeY" type="Label" parent="CanvasEdit/Margin/Vbox/SizeY"]
+margin_left = 10.0
+margin_top = 5.0
+margin_right = 47.0
+margin_bottom = 19.0
+size_flags_horizontal = 6
+text = "Size Y"
+
+[node name="LineEdit" type="LineEdit" parent="CanvasEdit/Margin/Vbox/SizeY"]
+margin_left = 62.0
+margin_right = 120.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="HSeparator" type="HSeparator" parent="CanvasEdit/Margin/Vbox"]
+margin_top = 74.0
+margin_right = 120.0
+margin_bottom = 78.0
+
+[node name="Buttons" type="HBoxContainer" parent="CanvasEdit/Margin/Vbox"]
+margin_top = 82.0
+margin_right = 120.0
+margin_bottom = 102.0
+size_flags_horizontal = 3
+
+[node name="Confirm" type="Button" parent="CanvasEdit/Margin/Vbox/Buttons"]
+margin_right = 62.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Confirm"
+
+[node name="Cancel" type="Button" parent="CanvasEdit/Margin/Vbox/Buttons"]
+margin_left = 66.0
+margin_right = 120.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Cancel"

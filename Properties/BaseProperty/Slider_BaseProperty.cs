@@ -1,6 +1,5 @@
 using Godot;
 
-[Tool]
 public class Slider_BaseProperty : HBoxContainer {
 
 	[Signal] public delegate void ValueChanged(float value);
@@ -66,7 +65,6 @@ public class Slider_BaseProperty : HBoxContainer {
 
 	private void onSlider_ValueChanged(float value) {
 
-		GD.Print(value);
 		setValue(value);
 	}
 

@@ -1,25 +1,24 @@
 using Godot;
 using Godot.Collections;
-using MSP.Tools;
-using static MSP.Actions.ActionHistory;
 
 namespace MSP.Actions{
 
 	public class ActionHistory : Node {
 
-		//[Signal] public delegate void ReverseAction(Color color, int index);
-
 		Array<Object> history = new Array<Object>();
 
 		Timer revertActionTimer;
+		float initalTimeDelay = .5f;
+		float heldTimeDelay = .01f;
 
 		public override void _Ready() {
 			
 			revertActionTimer = new Timer();
-			revertActionTimer.WaitTime = 0.3f;
-			revertActionTimer.OneShot = false;
+			revertActionTimer.WaitTime = initalTimeDelay;
+			revertActionTimer.OneShot = true;
 			revertActionTimer.Connect("timeout", this, nameof(onRevertActionTimeout));
 			AddChild(revertActionTimer);
+
 			base._Ready();
 		}
 
@@ -27,11 +26,12 @@ namespace MSP.Actions{
 
 			if(Input.IsActionJustPressed("Action_Redo") && Input.IsPhysicalKeyPressed((int) KeyList.Control)) {
 
-				onRevertActionTimeout();
 				revertActionTimer?.Start();
+				onRevertActionTimeout();
 			}
 			if(Input.IsActionJustReleased("Action_Redo") || !Input.IsPhysicalKeyPressed((int) KeyList.Control)) {
 
+				revertActionTimer.WaitTime = initalTimeDelay;
 				revertActionTimer.Stop();
 			}
 			base._Input(@event);
@@ -54,12 +54,17 @@ namespace MSP.Actions{
 				return;
 			}
 
+			if(revertActionTimer.TimeLeft <= 0) {
+
+				revertActionTimer.WaitTime = heldTimeDelay;
+			}
+
 			Object action = history[history.Count - 1];
 
 			if(action is Action) {
 
 				ReverseAction((Action) action);
-				return;
+				revertActionTimer.Start();
 			}
 
 			if(action is RepeatAction) {
@@ -75,8 +80,7 @@ namespace MSP.Actions{
 					ReverseAction((Action) history[history.Count - 1]);
 				}
 
-				return;
-				
+				revertActionTimer.Start();
 			}
 		}
 

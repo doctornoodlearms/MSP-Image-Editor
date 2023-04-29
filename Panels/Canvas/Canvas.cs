@@ -1,15 +1,17 @@
 using Godot;
 using MSP.Actions;
+using System;
 
 namespace MSP{
 
 	public class Canvas : Control {
 
+		Curve2D drawCurve = new Curve2D();
+
 		// How often the pixels should be rendered
 		float renderTickRate = 0;
 		float renderTickCount = 0;
 
-		// The size of a pixel at the default zoom level
 		public Vector2 basePixelSize = new Vector2(50, 50);
 
 		// How much to modify the pixel scale
@@ -17,7 +19,6 @@ namespace MSP{
 		public float zoomMax = 2.0f;
 		public float zoomMin = 0.1f;
 
-		// The current sscale of the pixel when drawn
 		float pixelScale = 1.0f;
 
 		// Camera values
@@ -26,18 +27,10 @@ namespace MSP{
 
 		public void Setup(){
 
-			// Update the tick rate to update every frame
 			renderTickRate = 1 / 60;
 		}
 
-		public override void _Ready() {
-
-			base._Ready();
-		}
-
 		public override void _Process(float delta) {
-
-			//GetParent<Viewport>().GuiDisableInput = Common.self.drawDisabled;
 
 			// Update the tick for the rendering
 			renderTickCount += delta;
@@ -65,11 +58,11 @@ namespace MSP{
 
 				PixelGroup pixel = Common.self.pixelList[i];
 
+				// Update pixel layers
 				if(Common.self.removeLayerQueue > -1) {
 				
 					pixel.RemoveLayer(Common.self.removeLayerQueue);
 				}
-
 				if(Common.self.layerUpdate.index > -1) {
 
 					LayerUpdate layerUpdate = Common.self.layerUpdate;
@@ -78,7 +71,7 @@ namespace MSP{
 
 				Vector2 realPixelPos = PixelPositionToGlobalPosition(pixel.position);
 
-				// Rendering optimization
+				// Skips drawing a pixel if it's off screen
 				if(canvasPos.x < 0 - realPixelPos.x || canvasPos.x > (RectSize.x + pixelScale * basePixelSize.x) - realPixelPos.x) {
 
 					continue;
@@ -90,8 +83,8 @@ namespace MSP{
 
 				Vector2 size = basePixelSize * pixelScale;
 				Vector2 position = canvasPos + pixel.position * size;
-
 				Color pixelColor = pixel.color;
+
 				DrawRect(new Rect2(position, size), pixelColor);
 			}
 
@@ -102,10 +95,16 @@ namespace MSP{
 			float borderWidth = 2.0f;
 			int cursorSize = Common.self.currentTool == Common.Tools.TOOL_PICKER ? 1 : ToolProperties.cursorSize;
 			Vector2 borderSize = basePixelSize * pixelScale;
-			Vector2 borderPosition = canvasPos + (GlobalPositionToPixelPosition(GetGlobalMousePosition(), false) - Vector2.One * Mathf.Floor(cursorSize / 2)) * borderSize;
+			Vector2 borderPosition = canvasPos + (GlobalPositionToPixelPosition(GetGlobalMousePosition(), true) - Vector2.One * Mathf.Floor(cursorSize / 2)) * borderSize;
 			DrawRect(new Rect2(borderPosition, borderSize * cursorSize), Colors.Black, false, borderWidth);
 
+			// Render the canvas border
 			DrawRect(new Rect2(canvasPos, Common.self.gridSize * pixelScale * basePixelSize), Colors.Red, false, borderWidth);
+
+			for(int i = 0; i < drawCurve.GetPointCount() - 1; i++) {
+
+				DrawLine(drawCurve.GetPointPosition(i), drawCurve.GetPointPosition(i + 1), Colors.Green);
+			}
 		}
 
 		public override void _GuiInput(InputEvent @event) {
@@ -115,7 +114,6 @@ namespace MSP{
 			int zoomOut = Input.IsActionJustPressed("Camera_Zoom_Out") && pixelScale > zoomMin ? 1 : 0;
 			pixelScale += (zoomIn - zoomOut) * zoomFactor;
 
-			// Enables / Disables the camera panning
 			canvasPan = Input.IsActionPressed("Camera_Pan");
 
 			// Pans the camera
@@ -130,15 +128,36 @@ namespace MSP{
 				InputEventMouseMotion mouseMotion = @event as InputEventMouseMotion;
 				if(Input.IsActionPressed("Pixel_Modify")) {
 
-					Common.self.UseTool(GlobalPositionToPixelPosition(mouseMotion.Position, false));
+					drawCurve.AddPoint(GetGlobalMousePosition());
+					if(drawCurve.GetPointCount() < 2) {
+
+						goto EndMotion;
+					}
+
+					float pointInterval = drawCurve.GetPointPosition(0).DistanceSquaredTo(drawCurve.GetPointPosition(1));
+					pointInterval = Mathf.Round(Mathf.Sqrt(pointInterval));
+
+					for(float i = 0.0f; i <= pointInterval; i++) {
+
+						Vector2 curvePos = drawCurve.Interpolate(0, i / pointInterval);
+						Common.self.UseTool(GlobalPositionToPixelPosition(curvePos, false));
+					}
+					drawCurve.RemovePoint(0);
 				}
 			}
 
+			EndMotion:
 			// Modifies a pixel
 			if(Input.IsActionJustPressed("Pixel_Modify")) {
 
+				drawCurve.AddPoint(GetGlobalMousePosition());
 				Vector2 pixelPos = GlobalPositionToPixelPosition(GetGlobalMousePosition(), false);
 				Common.self.UseTool(pixelPos);
+			}
+
+			if(!Input.IsActionPressed("Pixel_Modify")){
+
+				drawCurve.ClearPoints();
 			}
 		}
 

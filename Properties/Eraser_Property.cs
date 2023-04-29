@@ -7,8 +7,6 @@ public class Eraser_Property : VBoxContainer {
 	public override void _Ready() {
 
 		GetNode<Slider_BaseProperty>("Size").Connect(nameof(Slider_BaseProperty.ValueChanged), this, nameof(onSize_Changed));
-
-
 		base._Ready();
 	}
 

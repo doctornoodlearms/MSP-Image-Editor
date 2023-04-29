@@ -1,6 +1,5 @@
 using Godot;
 using Godot.Collections;
-using System.Runtime;
 
 namespace MSP{
 
@@ -14,7 +13,7 @@ namespace MSP{
 
 		public Vector2 position;
 
-		private Array<Color> layers = new Array<Color>() { Colors.White};
+		private Array<Color> layers = new Array<Color>() { Colors.White };
 
 		public PixelGroup() {}
 
@@ -64,6 +63,25 @@ namespace MSP{
 		public override string ToString() {
 			
 			return "Pixel: "+ position.ToString();
+		}
+
+		public Array<string> Serialize() {
+
+			Array<string> data = new Array<string>();
+			
+			string nextEntry = "";
+			foreach(Color color in layers) {
+
+				if(color == Common.nullColor) {
+
+					nextEntry = "FFF";
+				}
+				else {
+					nextEntry = color.ToHtml();
+				}
+				data.Add(nextEntry);
+			}
+			return data;
 		}
 
 		void CalculateColor() {

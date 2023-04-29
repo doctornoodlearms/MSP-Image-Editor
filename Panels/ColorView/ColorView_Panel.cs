@@ -10,6 +10,7 @@ public class ColorView_Panel : Control {
 
 		mainColor = GetNode("ColorList/MainColor") as ColorPickerButton;
 		secondaryColor = GetNode("ColorList/SecondaryColor") as ColorPickerButton;
+		Common.self.Connect(nameof(Common.ColorChanged), this, nameof(onCommon_ColorChanged));
 
 		mainColor.Connect("color_changed", this, nameof(onColorPicker_Changed));
 
@@ -32,5 +33,10 @@ public class ColorView_Panel : Control {
 	void onColorPicker_Changed(Color color) {
 	
 		GetNode<Common>("/root/Common").selectedColor = color;
+	}
+
+	void onCommon_ColorChanged(Color color) {
+
+		mainColor.Color = color;
 	}
 }

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://Properties/Pencil_Property.cs" type="Script" id=1]
+[ext_resource path="res://Properties/Eraser_Property.cs" type="Script" id=1]
 [ext_resource path="res://Properties/BaseProperty/Slider_BaseProperty.tscn" type="PackedScene" id=2]
 
 [node name="Eraser_Property" type="VBoxContainer"]

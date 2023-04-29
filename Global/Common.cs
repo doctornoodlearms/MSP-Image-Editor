@@ -1,12 +1,12 @@
 using Godot;
+using Godot.Collections;
 using MSP.Actions;
-using MSP.Tools;
-using System.Linq;
 
 namespace MSP {
 
 	public class Common : Node {
 
+		// Allows other nodes to get this node without GetNode
 		public static Common self;
 
 		[Signal] public delegate void ColorChanged(Color color);
@@ -37,9 +37,9 @@ namespace MSP {
 
 		public override void _Ready() {
 
-			FileDialog fileDialog = GetNode("../Background/FileDialog") as FileDialog;
+			FileDialog fileDialog = GetNode("../Root/FileDialog") as FileDialog;
 			fileDialog.CurrentDir = OS.GetSystemDir(OS.SystemDir.Pictures);
-			fileDialog.Connect("file_selected", this, nameof(SaveFile));
+			//fileDialog.Connect("file_selected", this, nameof(SaveFile));
 			fileDialog.Connect("popup_hide", this, nameof(onFileDialog_PopupHide));
 			base._Ready();
 		}
@@ -108,18 +108,12 @@ namespace MSP {
 		public void UseTool(Vector2 pixelPos) {
 
 			int pixelIndex = PixelPositionToPixelIndex(pixelPos);
-			//if(pixelIndex == -1) {
-
-			//	return;
-			//}
-
-			//PixelGroup pixel = pixelList[pixelIndex];
 
 			switch(currentTool) {
 
 				case (Tools.TOOL_PICKER):
 
-					if(pixelIndex > -1) {
+					if(pixelIndex <= -1) {
 
 						break;
 					}
@@ -128,7 +122,11 @@ namespace MSP {
 
 				case (Tools.TOOL_PENCIL):
 
-					ModifyPixel(selectedColor, pixelPos);
+					float colorRand = ToolProperties.colorRandomize;
+					Color newColor = selectedColor;
+
+					newColor.h += (float) GD.RandRange(colorRand * -1, colorRand);
+					ModifyPixel(newColor, pixelPos);
 					break;
 
 				case (Tools.TOOL_ERASER):
@@ -176,7 +174,6 @@ namespace MSP {
 			}
 		}
 
-		// Coverts a pixel position on the grid to the pixel index in the list (returns -1 if null)
 		public int PixelPositionToPixelIndex(Vector2 pixelPos) {
 
 			// Out of bounds on X
@@ -195,11 +192,9 @@ namespace MSP {
 
 		public void SaveFile(string path) {
 
-			GD.Print("Saving File");
+			Godot.Image image = new Godot.Image();
 
-			Image image = new Image();
-
-			image.Create((int) gridSize.x, (int) gridSize.y + 1, false, Image.Format.Rgb8);
+			image.Create((int)gridSize.x, (int)gridSize.y + 1, false, Godot.Image.Format.Rgb8);
 			image.Lock();
 			foreach(PixelGroup pixel in pixelList) {
 			
@@ -208,6 +203,49 @@ namespace MSP {
 			
 			image.Unlock();
 			image.SavePng(path);
+		}
+
+		public void SaveProject(string path) {
+
+			Array pixelData = new Array();
+			foreach(PixelGroup pixel in pixelList) {
+
+				pixelData.Add(pixel.Serialize());
+			}
+			Dictionary projectData = new Dictionary() {
+				{"SizeX", gridSize.x},
+				{"SizeY", gridSize.y},
+				{"Pixels", pixelData}
+			};
+
+			string jsonData = JSON.Print(projectData);
+
+			Godot.File file = new Godot.File();
+			file.Open(path, Godot.File.ModeFlags.Write);
+			file.StoreString(jsonData);
+			file.Close();
+		}
+
+		public void LoadProject(string path) {
+
+			Godot.File file = new Godot.File();
+			file.Open(path, Godot.File.ModeFlags.Read);
+			string data = file.GetAsText();
+			file.Close();
+
+			Dictionary jsonData = (Dictionary) JSON.Parse(data).Result;
+			SetGridSize(new Vector2((float) jsonData["SizeX"], (float) jsonData["SizeY"]));
+
+			Array pixelData = (Array) jsonData["Pixels"];
+			Array entry;
+			for(int i = 0; i < ((Array) jsonData["Pixels"]).Count; i++) {
+
+				entry = (Array) pixelData[i];
+				for(int j = 0; j < entry.Count; j++) {
+
+					pixelList[i].setColor(new Color((string) entry[j]), j);
+				}
+			}
 		}
 
 		void onFileDialog_PopupHide() {

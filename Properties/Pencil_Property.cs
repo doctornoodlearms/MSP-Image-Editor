@@ -9,7 +9,6 @@ public class Pencil_Property : VBoxContainer {
 
 		GetNode<Slider_BaseProperty>("Size").Connect(nameof(Slider_BaseProperty.ValueChanged), this, nameof(onSize_Changed));
 		GetNode<Slider_BaseProperty>("RandColor").Connect(nameof(Slider_BaseProperty.ValueChanged), this, nameof(onRandColor_Changed));
-
 		base._Ready();
 	}
 

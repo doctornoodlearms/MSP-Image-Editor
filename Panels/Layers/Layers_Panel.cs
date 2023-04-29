@@ -26,6 +26,9 @@ public class Layers_Panel : VBoxContainer {
 		addLayer = GetNode<Button>("Buttons/AddLayer");
 
 		addLayer.Connect("pressed", this, nameof(onAddLayer_Pressed));
+
+		AddNewLayer();
+		GetChild<Layer_Instance>(1).layerName = "Layer 0";
 	}
 
 	void AddNewLayer() {
